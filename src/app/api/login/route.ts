@@ -16,9 +16,6 @@ export async function POST(req: NextRequest) {
   }
 
   const record = secureStore.get(username);
-  for (const [user, value] of secureStore.entries()) {
-    console.log("user:", user, "value:", value);
-  }
   const now = Date.now();
 
   if (!record) {
@@ -45,8 +42,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Here you should validate the hashedPassword with your user DB
-  // For demo, accept any hashedPassword (or compare with mock value)
   // For example, just accept any non-empty password:
   if (hashedPassword.length === 0) {
     return NextResponse.json({ message: "Invalid password." }, { status: 400 });
@@ -55,9 +50,14 @@ export async function POST(req: NextRequest) {
   // On successful login, clear secure word to prevent reuse
   secureStore.delete(username);
 
+  // Generate and return MFA code
+  const mfaCode = setMfaCode(username);
+
   // Return a mock JWT token or session token
   const mockToken = "mock-jwt-token";
-  setMfaCode(username);
 
-  return NextResponse.json({ token: mockToken });
+  return NextResponse.json({
+    token: mockToken,
+    mfaCode, // ✅ Include MFA code for debugging/demo
+  });
 }
