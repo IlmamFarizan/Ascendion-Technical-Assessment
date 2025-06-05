@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateMfaCode } from "@/lib/mfa";
+import { verifyMfa } from "@/lib/mfa";
 
 export async function POST(req: NextRequest) {
   const { username, code } = await req.json();
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const result = validateMfaCode(username, code);
+  const result = verifyMfa(username, code);
 
   return NextResponse.json(
     { message: result.message },

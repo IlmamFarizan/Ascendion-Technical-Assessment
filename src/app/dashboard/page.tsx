@@ -15,10 +15,11 @@ import { useRouter } from "next/navigation";
 
 type Transaction = {
   id: string;
+  referenceId: string;
   date: string;
-  description: string;
+  to: string;
+  transactionType: string;
   amount: string;
-  status: string;
 };
 
 export default function DashboardPage() {
@@ -74,12 +75,13 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions.map((tx) => (
-                  <TableRow key={tx.id}>
-                    <TableCell>{tx.date}</TableCell>
-                    <TableCell>{tx.description}</TableCell>
-                    <TableCell>{tx.amount}</TableCell>
-                    <TableCell>{tx.status}</TableCell>
+                {transactions.map((data) => (
+                  <TableRow key={data.id}>
+                    <TableCell>{data.date}</TableCell>
+                    <TableCell>{data.referenceId}</TableCell>
+                    <TableCell>{data.to}</TableCell>
+                    <TableCell>{data.transactionType}</TableCell>
+                    <TableCell>{data.amount}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

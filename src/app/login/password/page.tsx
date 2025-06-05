@@ -29,7 +29,10 @@ export default function PasswordPage() {
       headers: { "Content-Type": "application/json" },
     });
 
+    const data = await res.json();
+    console.log(data);
     if (res.ok) {
+      localStorage.setItem("token", data.token);
       router.push(`/login/mfa?username=${encodeURIComponent(username)}`);
     } else {
       setError("Login failed. Please check your credentials.");

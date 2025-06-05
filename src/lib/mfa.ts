@@ -3,21 +3,21 @@ const mfaAttempts = new Map<string, number>();
 const MAX_ATTEMPTS = 3;
 
 // Generate code based on username and secret
-export function generateMfaCode(username: string): string {
-  const hash = Buffer.from(username + "secret").toString("base64");
+export function generateMfaCode(secret: string): string {
+  const hash = Buffer.from(secret + "secret").toString("base64");
   return hash.slice(0, 6).toUpperCase();
 }
 
 // Store code and reset attempts
 export function setMfaCode(username: string): string {
-  const code = generateMfaCode(username);
+  const code = generateMfaCode(process.env.SECRET || "default-secret");
   mfaCodes.set(username, code);
   mfaAttempts.set(username, 0);
   return code;
 }
 
 // Validate MFA code
-export function validateMfaCode(username: string, inputCode: string) {
+export function verifyMfa(username: string, inputCode: string) {
   if (!mfaCodes.has(username)) {
     return {
       success: false,

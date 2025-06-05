@@ -21,9 +21,9 @@ export default function MfaPage() {
     });
 
     const data = await res.json();
-
+    console.log(data);
     if (res.ok) {
-      localStorage.setItem("token", "mock-jwt-token");
+      localStorage.setItem("token", data.token);
       setError(""); // clear previous error if any
       router.push("/dashboard");
     } else {

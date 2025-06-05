@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import secureStore from "@/lib/secureStore";
 import { setMfaCode } from "@/lib/mfa";
+import jwt from "jsonwebtoken";
 
 export async function POST(req: NextRequest) {
   const { username, hashedPassword, secureWord } = await req.json();
@@ -51,10 +52,13 @@ export async function POST(req: NextRequest) {
   const mfaCode = setMfaCode(username);
 
   // Return a mock JWT token or session token
-  const mockToken = "mock-jwt-token";
+  const token = jwt.sign(
+    { username, hashedPassword, secureWord },
+    process.env.SECRET || "default-secret"
+  );
 
   return NextResponse.json({
-    token: mockToken,
-    mfaCode, // ✅ Include MFA code for debugging/demo
+    token: token,
+    mfaCode, // Include MFA code for QOL
   });
 }

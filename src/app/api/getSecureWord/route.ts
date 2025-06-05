@@ -26,8 +26,10 @@ export async function POST(req: NextRequest) {
   }
 
   const secureWord = crypto
-    .createHmac("sha256", process.env.SECRET || "default-secret")
-    .update(username)
+    .createHmac(
+      "sha256",
+      username + now.toString() + (process.env.SECRET || "default-secret")
+    )
     .digest("hex")
     .slice(0, 8);
 
