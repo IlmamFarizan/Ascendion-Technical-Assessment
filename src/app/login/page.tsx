@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [secureWord, setSecureWord] = useState("");
   const [timer, setTimer] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   // Countdown effect for secure word expiration
@@ -40,8 +42,9 @@ export default function LoginPage() {
       localStorage.setItem("secureWordData", JSON.stringify(data));
       setSecureWord(data.secureWord);
       setTimer(60); // start 60 second countdown
+      setErrorMessage(""); // clear previous error if any
     } else {
-      alert(data.message);
+      setErrorMessage(data.message); // show new error
     }
   };
 
@@ -52,15 +55,22 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="p-4 pt-8 max-w-sm mx-auto">
-      <h1 className="text-xl font-bold mb-4">Login</h1>
-      <form onSubmit={handleSubmit}>
+    <main className="p-4 pt-8 max-w-sm mx-auto space-y-4">
+      <h1 className="text-xl font-bold">Login</h1>
+
+      {errorMessage && (
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-3">
         <Input
           type="text"
           placeholder="Enter username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="mb-3"
         />
         <Button type="submit" className="w-full">
           Generate Secure Word
@@ -68,14 +78,14 @@ export default function LoginPage() {
       </form>
 
       {secureWord && (
-        <div className="mt-4 border border-yellow-400 bg-yellow-50 p-3 rounded text-sm">
+        <div className="border border-yellow-400 bg-yellow-50 p-3 rounded text-sm space-y-2">
           <p>
             <strong>Secure Word:</strong> {secureWord}
           </p>
           <p className="text-yellow-700">
             ⚠️ This code will expire in {timer} second{timer !== 1 ? "s" : ""}.
           </p>
-          <Button onClick={handleNext} className="mt-3 w-full">
+          <Button onClick={handleNext} className="w-full">
             Next
           </Button>
         </div>

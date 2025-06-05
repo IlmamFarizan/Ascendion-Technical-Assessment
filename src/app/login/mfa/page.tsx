@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export default function MfaPage() {
   const username = useSearchParams().get("username") || "";
@@ -19,17 +20,28 @@ export default function MfaPage() {
       headers: { "Content-Type": "application/json" },
     });
 
+    const data = await res.json();
+
     if (res.ok) {
       localStorage.setItem("token", "mock-jwt-token");
+      setError(""); // clear previous error if any
       router.push("/dashboard");
     } else {
-      setError("MFA verification failed. Please try again.");
+      setError(data.message || "MFA verification failed. Please try again.");
     }
   }
 
   return (
-    <main className="max-w-sm mx-auto p-4 pt-8">
-      <h1 className="text-xl font-bold mb-6">Multi-Factor Authentication</h1>
+    <main className="max-w-sm mx-auto p-4 pt-8 space-y-4">
+      <h1 className="text-xl font-bold">Multi-Factor Authentication</h1>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
@@ -41,8 +53,6 @@ export default function MfaPage() {
           aria-label="6-digit authentication code"
           required
         />
-        {error && <p className="text-sm text-red-600">{error}</p>}
-
         <Button type="submit" size="lg" className="w-full">
           Verify
         </Button>

@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import secureStore from "@/lib/secureStore";
-import { setMfaCode } from "../verifyMfa/route";
-
-// For demo, a hardcoded "hashed password" for validation
-const MOCK_HASHED_PASSWORD = "e3afed0047b08059d0fada10f400c1e5"; // just example
+import { setMfaCode } from "@/lib/mfa";
 
 export async function POST(req: NextRequest) {
   const { username, hashedPassword, secureWord } = await req.json();
